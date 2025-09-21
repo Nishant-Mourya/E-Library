@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-3">Available Books</h2>
+
+  <!-- Search Bar -->
+  <input type="text" id="searchBar" class="form-control mb-4" placeholder="Search books...">
+
+  <!-- Books Grid -->
+  <div class="row" id="bookGrid">
+    {% if books %}
+      {% for book in books %}
+      <div class="col-md-3 mb-4 book-card">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ book.title }}</h5>
+            <p class="card-text">By {{ book.author }}</p>
+            <span class="badge bg-info">{{ book.category }}</span>
+            <button class="btn btn-sm btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#bookModal{{ book.id }}">
+              Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal for this book -->
+        <div class="modal fade" id="bookModal{{ book.id }}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ book.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Category:</strong> {{ book.category }}</p>
+                <p>{{ book.description }}</p>
+              </div>
+              <div class="modal-footer">
+                <a href="{{ book.file_link }}" target="_blank" class="btn btn-success">📖 Read Book</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No books available.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Search Script -->
+<script>
+  const searchBar = document.getElementById('searchBar');
+  searchBar.addEventListener('keyup', function() {
+    const filter = searchBar.value.toLowerCase();
+    const bookCards = document.querySelectorAll('.book-card');
+    bookCards.forEach(card => {
+      const title = card.querySelector('.card-title').textContent.toLowerCase();
+      const author = card.querySelector('.card-text').textContent.toLowerCase();
+      if(title.includes(filter) || author.includes(filter)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}
